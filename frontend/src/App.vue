@@ -1,14 +1,16 @@
 <script setup>
 import { computed, ref } from "vue";
-import { BadgeDollarSign, Car, FileText, IdCard } from "lucide-vue-next";
+import { BadgeDollarSign, Car, FileText, IdCard, MapPin } from "lucide-vue-next";
 import InvoicePage from "./pages/InvoicePage.vue";
 import MonthlyCardPage from "./pages/MonthlyCardPage.vue";
 import ParkingBillingPage from "./pages/ParkingBillingPage.vue";
 import SpaceMonitorPage from "./pages/SpaceMonitorPage.vue";
+import ZoneManagerPage from "./pages/ZoneManagerPage.vue";
 
 const current = ref("spaces");
 const tabs = [
   { key: "spaces", label: "车位监控", icon: Car, component: SpaceMonitorPage },
+  { key: "zones", label: "区域管理", icon: MapPin, component: ZoneManagerPage },
   { key: "cards", label: "月卡办理", icon: IdCard, component: MonthlyCardPage },
   { key: "billing", label: "临停计费", icon: BadgeDollarSign, component: ParkingBillingPage },
   { key: "invoices", label: "电子发票", icon: FileText, component: InvoicePage },
