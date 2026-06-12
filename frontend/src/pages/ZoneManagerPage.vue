@@ -220,12 +220,16 @@ onMounted(() => {
             <strong class="stat-value occupied">{{ zone.occupied_count }}</strong>
           </div>
           <div class="stat-item">
-            <span class="stat-label">空闲</span>
-            <strong class="stat-value free">{{ zone.free_count }}</strong>
+            <span class="stat-label">维护中</span>
+            <strong class="stat-value maintenance">{{ zone.maintenance_count }}</strong>
           </div>
           <div class="stat-item">
             <span class="stat-label">预约</span>
             <strong class="stat-value reserved">{{ zone.reserved_count }}</strong>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">空闲</span>
+            <strong :class="['stat-value', zone.free_count === 0 ? 'zero' : 'free']">{{ zone.free_count }}</strong>
           </div>
         </div>
 
@@ -365,7 +369,7 @@ onMounted(() => {
 
 .zone-stats {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 8px;
   padding: 12px;
   background: #f6faf8;
@@ -398,6 +402,18 @@ onMounted(() => {
 
 .stat-value.reserved {
   color: #805600;
+}
+
+.stat-value.maintenance {
+  color: #4c5964;
+}
+
+.stat-value.zero {
+  color: #ffffff;
+  background: #c0392b;
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 18px;
 }
 
 .zone-desc {
@@ -514,7 +530,7 @@ textarea {
   }
 
   .zone-stats {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 </style>

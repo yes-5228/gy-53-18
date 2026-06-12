@@ -42,7 +42,7 @@ def list_zones():
         zone["occupied_count"] = zone_stats.get("occupied", 0)
         zone["reserved_count"] = zone_stats.get("reserved", 0)
         zone["maintenance_count"] = zone_stats.get("maintenance", 0)
-        zone["free_count"] = zone["capacity"] - zone["occupied_count"] - zone["maintenance_count"]
+        zone["free_count"] = zone["capacity"] - zone["occupied_count"] - zone["maintenance_count"] - zone["reserved_count"]
         if zone["free_count"] < 0:
             zone["free_count"] = 0
         zone["total_count"] = sum(zone_stats.values())
