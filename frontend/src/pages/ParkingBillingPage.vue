@@ -16,7 +16,11 @@ const calcForm = reactive({
   exit_time: new Date().toISOString().slice(0, 16),
 });
 
-const freeSpaces = computed(() => spaces.value.filter((space) => ["free", "reserved"].includes(space.status)));
+const freeSpaces = computed(() => spaces.value.filter((space) => {
+  if (!["free", "reserved"].includes(space.status)) return false;
+  if (space.zone_maintenance_status && space.zone_maintenance_status !== "normal") return false;
+  return true;
+}));
 const parkingOrders = computed(() => orders.value.filter((order) => order.status === "parking"));
 
 async function loadData() {

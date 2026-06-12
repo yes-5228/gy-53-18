@@ -102,7 +102,18 @@ function closeForm() {
 async function handleSubmit() {
   try {
     if (editingZone.value) {
-      await parkingApi.updateZone(editingZone.value.id, formData.value);
+      try {
+        await parkingApi.updateZone(editingZone.value.id, formData.value);
+      } catch (err) {
+        if (err.need_confirm) {
+          if (!confirm(err.message)) {
+            return;
+          }
+          await parkingApi.updateZone(editingZone.value.id, { ...formData.value, force: true });
+        } else {
+          throw err;
+        }
+      }
     } else {
       await parkingApi.createZone(formData.value);
     }
@@ -133,7 +144,18 @@ async function toggleMaintenance(zone) {
     await parkingApi.updateZone(zone.id, { maintenance_status: nextStatus });
     await loadZones();
   } catch (err) {
-    error.value = err.message || "操作失败";
+    if (err.need_confirm) {
+      if (confirm(err.message)) {
+        try {
+          await parkingApi.updateZone(zone.id, { maintenance_status: nextStatus, force: true });
+          await loadZones();
+        } catch (err2) {
+          error.value = err2.message || "操作失败";
+        }
+      }
+    } else {
+      error.value = err.message || "操作失败";
+    }
   }
 }
 

@@ -13,7 +13,7 @@ def list_spaces():
 
     with get_connection() as conn:
         query = """
-            SELECT s.*, z.name AS zone_name, z.floor AS floor, z.code AS zone_code
+            SELECT s.*, z.name AS zone_name, z.floor AS floor, z.code AS zone_code, z.maintenance_status AS zone_maintenance_status
             FROM spaces s
             LEFT JOIN parking_zones z ON s.zone_id = z.id
             WHERE 1=1
@@ -94,7 +94,7 @@ def get_space(space_id):
     with get_connection() as conn:
         row = conn.execute(
             """
-            SELECT s.*, z.name AS zone_name, z.floor AS floor, z.code AS zone_code
+            SELECT s.*, z.name AS zone_name, z.floor AS floor, z.code AS zone_code, z.maintenance_status AS zone_maintenance_status
             FROM spaces s
             LEFT JOIN parking_zones z ON s.zone_id = z.id
             WHERE s.id = ?

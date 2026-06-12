@@ -42,7 +42,7 @@ def list_zones():
         zone["occupied_count"] = zone_stats.get("occupied", 0)
         zone["reserved_count"] = zone_stats.get("reserved", 0)
         zone["maintenance_count"] = zone_stats.get("maintenance", 0)
-        zone["free_count"] = zone["capacity"] - zone["occupied_count"]
+        zone["free_count"] = zone["capacity"] - zone["occupied_count"] - zone["maintenance_count"]
         if zone["free_count"] < 0:
             zone["free_count"] = 0
         zone["total_count"] = sum(zone_stats.values())
@@ -116,6 +116,7 @@ def update_zone(zone_id):
     data = request.get_json() or {}
     allowed_fields = {"name", "floor", "code", "capacity", "maintenance_status", "description"}
     update_data = {k: v for k, v in data.items() if k in allowed_fields}
+    force = data.get("force", False)
 
     if not update_data:
         return {"message": "没有可更新的字段"}, 400
@@ -132,7 +133,7 @@ def update_zone(zone_id):
 
     with get_connection() as conn:
         existing = conn.execute(
-            "SELECT id FROM parking_zones WHERE id = ?", (zone_id,)
+            "SELECT * FROM parking_zones WHERE id = ?", (zone_id,)
         ).fetchone()
         if not existing:
             return {"message": "区域不存在"}, 404
@@ -144,6 +145,23 @@ def update_zone(zone_id):
             ).fetchone()
             if code_exist:
                 return {"message": "区域编码已存在"}, 409
+
+        if (
+            "maintenance_status" in update_data
+            and update_data["maintenance_status"] in {"maintenance", "closed"}
+            and not force
+        ):
+            occupied = conn.execute(
+                "SELECT COUNT(*) AS count FROM spaces WHERE zone_id = ? AND status = 'occupied'",
+                (zone_id,),
+            ).fetchone()["count"]
+            if occupied > 0:
+                status_label = "维护中" if update_data["maintenance_status"] == "maintenance" else "已关闭"
+                return {
+                    "message": f"当前区域有 {occupied} 辆车在场，确定要设为{status_label}吗？",
+                    "occupied_count": occupied,
+                    "need_confirm": True,
+                }, 409
 
         conn.execute(
             f"""

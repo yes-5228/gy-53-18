@@ -25,7 +25,9 @@ async function request(path, options = {}) {
 
   const payload = await response.json().catch(() => ({}));
   if (!response.ok) {
-    throw new Error(payload.message || "请求失败");
+    const error = new Error(payload.message || "请求失败");
+    Object.assign(error, payload);
+    throw error;
   }
   return payload;
 }
