@@ -30,6 +30,14 @@ def create_entry():
         if space["status"] not in {"free", "reserved"}:
             return {"message": "车位当前不可入场"}, 409
 
+        if space["zone_id"]:
+            zone = conn.execute(
+                "SELECT * FROM parking_zones WHERE id = ?", (space["zone_id"],)
+            ).fetchone()
+            if zone and zone["maintenance_status"] in {"maintenance", "closed"}:
+                status_label = "维护中" if zone["maintenance_status"] == "maintenance" else "已关闭"
+                return {"message": f"区域「{zone['name']}」{status_label}，不可入场"}, 409
+
         entry_time = data.get("entry_time") or datetime.now().isoformat(timespec="minutes")
         cur = conn.execute(
             """

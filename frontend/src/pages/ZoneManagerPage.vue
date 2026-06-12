@@ -194,16 +194,16 @@ onMounted(() => {
             <strong class="stat-value">{{ zone.capacity }}</strong>
           </div>
           <div class="stat-item">
-            <span class="stat-label">已用</span>
-            <strong class="stat-value">{{ zone.total_count }}</strong>
+            <span class="stat-label">已占用</span>
+            <strong class="stat-value occupied">{{ zone.occupied_count }}</strong>
           </div>
           <div class="stat-item">
             <span class="stat-label">空闲</span>
             <strong class="stat-value free">{{ zone.free_count }}</strong>
           </div>
           <div class="stat-item">
-            <span class="stat-label">占用</span>
-            <strong class="stat-value occupied">{{ zone.occupied_count }}</strong>
+            <span class="stat-label">预约</span>
+            <strong class="stat-value reserved">{{ zone.reserved_count }}</strong>
           </div>
         </div>
 
@@ -372,6 +372,10 @@ onMounted(() => {
 
 .stat-value.occupied {
   color: #9b2e1c;
+}
+
+.stat-value.reserved {
+  color: #805600;
 }
 
 .zone-desc {

@@ -39,10 +39,12 @@ def list_zones():
     zones = rows_to_dicts(rows)
     for zone in zones:
         zone_stats = stats.get(zone["id"], {})
-        zone["free_count"] = zone_stats.get("free", 0)
         zone["occupied_count"] = zone_stats.get("occupied", 0)
         zone["reserved_count"] = zone_stats.get("reserved", 0)
         zone["maintenance_count"] = zone_stats.get("maintenance", 0)
+        zone["free_count"] = zone["capacity"] - zone["occupied_count"]
+        if zone["free_count"] < 0:
+            zone["free_count"] = 0
         zone["total_count"] = sum(zone_stats.values())
     return {"items": zones}
 
